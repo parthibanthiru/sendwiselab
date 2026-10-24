@@ -4,6 +4,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Recipient, Transfer } from './types';
 import { normalizeIban } from '../iban';
+import { getIntlTransfers } from './international/store';
 
 const RECIPIENTS_KEY = 'mt.transfers.recipients.v1';
 const HISTORY_KEY = 'mt.transfers.history.v1';
@@ -66,10 +67,14 @@ export async function isKnownPayee(iban: string) {
   return (await getTransfers()).some((t) => t.iban === normalized && t.status !== 'failed');
 }
 
-/** Sum of today's (local date) non-failed transfers, for the daily limit. */
+/** Sum of today's (local date) non-failed transfers, SEPA and international, for the daily limit. */
 export async function sentTodayCents(now = new Date()) {
   const day = now.toDateString();
-  return (await getTransfers())
-    .filter((t) => t.status !== 'failed' && new Date(t.createdAt).toDateString() === day)
-    .reduce((sum, t) => sum + t.amountCents, 0);
+  const today = (t: { status: string; createdAt: string }) =>
+    t.status !== 'failed' && new Date(t.createdAt).toDateString() === day;
+  const [sepa, intl] = await Promise.all([getTransfers(), getIntlTransfers()]);
+  return (
+    sepa.filter(today).reduce((sum, t) => sum + t.amountCents, 0) +
+    intl.filter(today).reduce((sum, t) => sum + t.sendCents, 0)
+  );
 }

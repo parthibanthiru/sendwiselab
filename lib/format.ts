@@ -36,3 +36,12 @@ export function parseNumber(input: string): number {
   }
   return s === '' ? NaN : Number(s);
 }
+
+/** Amount in minor units of any currency: 1234567 INR (2 decimals) -> "₹12,345.67" / "12.345,67 ₹". */
+export const formatMoney = (minor: number, currency: string, decimals = 2) =>
+  (minor / 10 ** decimals).toLocaleString(locale(), {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });

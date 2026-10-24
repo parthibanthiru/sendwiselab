@@ -17,6 +17,8 @@ export default function UeberweisenLayout() {
     >
       <Stack.Screen name="index" options={{ title: t.transfer.title }} />
       <Stack.Screen name="neu" options={{ title: t.transfer.newTitle }} />
+      <Stack.Screen name="ausland" options={{ title: t.intl.title }} />
+      <Stack.Screen name="identitaet" options={{ title: t.identity.title }} />
     </Stack>
   );
 }

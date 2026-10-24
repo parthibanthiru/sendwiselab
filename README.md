@@ -1,6 +1,7 @@
 # SendWiseLab
 
-Android, iOS and web app (Expo / React Native) for sending SEPA transfers from your own bank account.
+Android, iOS and web app (Expo / React Native) for sending money from your own bank account: SEPA
+transfers in euros, and transfers abroad to 28 countries paid out in local currency.
 The web version runs at https://parthibanthiru.github.io/sendwiselab/ (see *Web version*).
 Named SendWiseLab on 24 Oct 2026 (previously the working title "Money Transfer"); the brand
 colors and icon are still neutral placeholders (see *Renaming*).
@@ -23,6 +24,14 @@ Separated from the Finanzpal app on 24 Oct 2026: own repo, own neutral look, own
   140 characters; Echtzeit or Standard) → review with the **payee check** (Verification of
   Payee: match / close match with "use this name" / no match / not possible; a warning needs
   an explicit confirmation) → done. First transfers to a new IBAN get an extra warning.
+- **Send abroad in 3 steps** (`ueberweisen/ausland`): destination (India, UK, US first; Europe
+  outside the euro; worldwide) and amount with the partner's quote (fee, rate, what the recipient
+  gets, delivery) → recipient with the bank details that country needs (account number + IFSC,
+  sort code, ABA routing number with check digit, IBAN of the country, SWIFT/BIC of the country,
+  address where banks require it) → review with purpose of payment, identity check, first-payment
+  and scam warnings → status tracker. Shares the daily limit with SEPA transfers.
+- **Identity check** (`ueberweisen/identitaet`): required before the first transfer abroad (anti
+  money laundering); demo only checks plausibility (name, 18+, address) and keeps it on the device.
 - **Profile:** name, light/dark/system theme, German/English, sign out, delete account (confirmed
   on the page, so it also works in a browser).
 - **Impressum and privacy policy** (`/legal/impressum`, `/legal/datenschutz`): linked under login,
@@ -40,6 +49,8 @@ lib/legal.ts                  operator details for Impressum / privacy policy, p
 lib/iban.ts                   IBAN check digits (mod 97), SEPA lengths, formatting
 lib/transfers/                TransferProvider interface, demo provider (simulated payee check),
                               recipients + history on the phone, limits and amount check
+lib/transfers/international/  PayoutProvider interface, countries + payout methods, bank-detail
+                              checks, demo payout partner (sample rates/fees), storage, identity
 lib/i18n.ts, lib/strings/     languages
 lib/format.ts                 € amounts and dates per language
 lib/supabase.ts, context/     Supabase client, auth / theme / language providers
@@ -100,6 +111,18 @@ and returns the provider's web-form URL where the user approves the transfer wit
 The history then moves from the phone (AsyncStorage) to a Supabase `transfers` table that only
 the server writes.
 
+## International transfers and the payout partner
+
+Money abroad is a regulated payment service (BaFin licence). SendWiseLab does not convert or pay
+out money itself: a licensed cross-border partner does (conversion, payout, identity checks /
+KYC, sanctions screening). Candidates: Wise Platform, Airwallex, Currencycloud, Nium.
+
+Until a contract exists, `demoPayout.ts` simulates the partner: **its rates, fee
+(0,99 € + 0,5 %) and delivery times are sample values**, and every screen that shows them says so.
+To connect the real partner, implement `PayoutProvider` (`lib/transfers/international/types.ts`)
+behind our own server and return it from `getPayoutProvider()` in `lib/transfers/index.ts`.
+The country list (`countries.ts`) then follows the partner's coverage and sanctions rules.
+
 ## Renaming
 
 Change `lib/brand.ts`, `app.json` (`name`, `slug`, `scheme`, `ios.bundleIdentifier`,
@@ -117,5 +140,7 @@ Change `lib/brand.ts`, `app.json` (`name`, `slug`, `scheme`, `ios.bundleIdentifi
   assumes the Supabase project is in Frankfurt (EU) and no other services; update it (and
   `PRIVACY_UPDATED`) whenever that changes. Have both texts checked before a real launch.
   Registration currently only asks to confirm the demo notice.
+- Payout partner for transfers abroad (contract, KYC flow, server endpoint); until then sample
+  quotes only. Funding of transfers abroad (how the euros reach the partner) is part of that.
 - Google / Apple sign-in (not set up).
 - Limits (1.000 € / 2.000 €) are starting values, to be confirmed with the provider.

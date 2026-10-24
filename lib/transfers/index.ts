@@ -1,14 +1,46 @@
 // Entry point of the transfer logic: which provider runs and the app's own safety limits.
 import { parseNumber } from '../format';
 import { demoProvider } from './demoProvider';
+import { demoPayoutProvider } from './international/demoPayout';
 import type { TransferProvider } from './types';
+import type { PayoutProvider } from './international/types';
 
 export * from './types';
 export * from './store';
+export * from './international/types';
+export * from './international/store';
+export * from './international/countries';
+export * from './international/validate';
 
 /** Only the demo provider exists so far; the real one is added here after the contract. */
 export function getTransferProvider(): TransferProvider {
   return demoProvider;
+}
+
+/** International transfers: demo partner until a licensed payout partner is contracted. */
+export function getPayoutProvider(): PayoutProvider {
+  return demoPayoutProvider;
+}
+
+/**
+ * Identity check before the first international transfer: adult (18+) by `birthDate`
+ * (YYYY-MM-DD). The real partner does the actual verification (ID document or eID).
+ */
+export function isAdult(birthDate: string, now = new Date()) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(birthDate);
+  if (!m) return false;
+  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const date = new Date(y, mo - 1, d);
+  if (date.getFullYear() !== y || date.getMonth() !== mo - 1 || date.getDate() !== d) return false;
+  const adultFrom = new Date(y + 18, mo - 1, d);
+  return adultFrom <= now && y > 1900;
+}
+
+/** "24.10.1990" (German) or "24/10/1990" (English) -> "1990-10-24"; '' when it can't be read. */
+export function parseBirthDate(input: string) {
+  const m = /^\s*(\d{1,2})[./-](\d{1,2})[./-](\d{4})\s*$/.exec(input);
+  if (!m) return '';
+  return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
 }
 
 /**
