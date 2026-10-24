@@ -10,6 +10,8 @@ const totals =
   `Tests: ${report.numPassedTests} passed, ${report.numFailedTests} failed, ${report.numTotalTests} total` +
   ` (suites failed: ${report.numFailedTestSuites})`;
 console.log(totals);
+const repeats = new Map();
+const failures = [];
 for (const file of report.testResults) {
   if (file.status === 'failed' && file.message && !file.assertionResults.some((a) => a.status === 'failed')) {
     // the whole file failed before any test ran (import error, syntax error …)
@@ -18,14 +20,27 @@ for (const file of report.testResults) {
   }
   for (const a of file.assertionResults) {
     if (a.status !== 'failed') continue;
-    console.log(`\n✗ ${[...a.ancestorTitles, a.title].join(' › ')}`);
     const msg = strip(a.failureMessages.join('\n'));
     const lines = msg.split('\n');
     const cut = lines.findIndex((l) => /^\s*<\w/.test(l)); // start of a component-tree dump
     // first lines of the message, without stack frames
     const head = lines.slice(0, cut > 0 ? cut : lines.length).filter((l) => !/^\s+at /.test(l));
-    console.log(head.slice(0, 6).join('\n'));
+    const text = head.slice(0, 6).join('\n');
+    const name = [...a.ancestorTitles, a.title].join(' › ');
+    // The same error in many tests (often a follow-up of the first failure) is printed once,
+    // with the number of further tests, so the first real error stays in the annotation.
+    const seen = repeats.get(text);
+    if (seen) {
+      seen.count++;
+      continue;
+    }
+    repeats.set(text, { count: 0 });
+    failures.push({ name, text, entry: repeats.get(text) });
   }
+}
+for (const f of failures) {
+  console.log(`\n✗ ${f.name}${f.entry.count ? `  (+${f.entry.count} more tests with the same error)` : ''}`);
+  console.log(f.text);
 }
 console.log(`\n${totals}`); // repeated at the end: the annotation keeps the last lines
 process.exitCode = report.success ? 0 : 1;
