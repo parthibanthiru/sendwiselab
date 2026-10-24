@@ -4,9 +4,9 @@
 #
 # One-time setup on GitHub:
 #   1. Settings → Pages → Build and deployment → Source: "GitHub Actions".
-#   2. Settings → Secrets and variables → Actions → Variables: add EXPO_PUBLIC_SUPABASE_URL and
-#      EXPO_PUBLIC_SUPABASE_ANON_KEY (the public anon key, never the service-role key).
-#      Without them the site shows a "sign-in isn't set up yet" notice instead of the login.
+#   2. Supabase keys: the SendWiseLab project's URL and public anon key are set below. To use
+#      another project, add EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY under
+#      Settings → Secrets and variables → Actions → Variables (never the service-role key).
 name: Deploy web
 
 on:
@@ -40,8 +40,10 @@ jobs:
 
       - name: Build the web app
         env:
-          EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
-          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+          # SendWiseLab Supabase project (Frankfurt). The anon key is public by design: it ships in the
+          # site's JavaScript, and Row Level Security protects the data. Repo variables override these.
+          EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL || 'https://zyprumoiyepyksmonohc.supabase.co' }}
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5cHJ1bW9peWVweWtzbW9ub2hjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI4Njc5MjgsImV4cCI6MjEwODQ0MzkyOH0.xesg1qloCUxWNQeIAUm8wPZiKjkhHeSMQE4xvjrUnnA' }}
         run: npx expo export --platform web --output-dir dist
 
       - name: Add page fallback and the prototype

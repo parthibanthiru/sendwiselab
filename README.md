@@ -69,10 +69,10 @@ Locally: `npm run web` (dev server) or `npm run build:web` (output in `dist/`).
 One-time setup:
 
 1. GitHub → Settings → Pages → Source: **GitHub Actions**.
-2. GitHub → Settings → Secrets and variables → Actions → **Variables**: `EXPO_PUBLIC_SUPABASE_URL`
-   and `EXPO_PUBLIC_SUPABASE_ANON_KEY` (anon key only; it ends up in the public JavaScript).
-   Re-run the "Deploy web" workflow after adding them. Without them the site shows a
-   "sign-in isn't set up yet" notice.
+2. Supabase: the project **SendWiseLab** (`zyprumoiyepyksmonohc`, Frankfurt) was created on
+   24 Oct 2026 with `supabase/schema.sql` applied. Its URL and public anon key are in
+   `deploy-web.yml`; repo variables `EXPO_PUBLIC_SUPABASE_URL` / `EXPO_PUBLIC_SUPABASE_ANON_KEY`
+   override them. A build without keys shows a "sign-in isn't set up yet" notice.
 3. Supabase → Authentication → URL Configuration: Site URL
    `https://parthibanthiru.github.io/sendwiselab/`, and add the same URL under Redirect URLs, so
    confirmation e-mails lead back to the site.
@@ -82,8 +82,10 @@ phone in AsyncStorage), like the session. A custom domain later means changing `
 
 ## Setup
 
-1. Create a **new** Supabase project (EU / Frankfurt), run `supabase/schema.sql` in the SQL editor.
-2. `cp .env.example .env` and fill in the project URL and anon key.
+1. Supabase project: **SendWiseLab** (`zyprumoiyepyksmonohc`, Frankfurt), schema already applied.
+   For a new project, run `supabase/schema.sql` in the SQL editor.
+2. `cp .env.example .env` and fill in the project URL (`https://zyprumoiyepyksmonohc.supabase.co`)
+   and anon key (Supabase → Project Settings → API).
 3. `npm install`, then `npx expo start` and open it in Expo Go (or `npm run android` / `npm run ios`).
 
 Checks: `npm run typecheck`, `npm test`. GitHub runs both plus the Android/iOS bundle builds on
