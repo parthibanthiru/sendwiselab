@@ -1,0 +1,54 @@
+# Checks the app on every push: installs the packages, checks they match the Expo SDK, runs the
+# TypeScript check, renders every screen (Jest) and builds the Android and iOS JavaScript bundles.
+# Failures are also posted as annotations on the commit (see tools/ci-step.sh).
+name: App check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Install packages
+        id: install
+        run: tools/ci-step.sh "npm install" npm install --no-audit --no-fund
+
+      # Report-only: versions are pinned in package.json to the SDK's tested set.
+      - name: Package versions match the Expo SDK
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: tools/ci-step.sh "expo install --check - fix locally with npx expo install --fix" npx expo install --check
+
+      - name: TypeScript check
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: tools/ci-step.sh "TypeScript" npx tsc --noEmit --pretty false
+
+      - name: Screen and logic tests
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: |
+          npx jest --ci --silent --json --outputFile="$RUNNER_TEMP/jest.json" || true
+          tools/ci-step.sh "Tests" node tools/jest-summary.mjs "$RUNNER_TEMP/jest.json"
+
+      - name: Build Android bundle
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: tools/ci-step.sh "Android bundle" npx expo export --platform android --output-dir "$RUNNER_TEMP/export-android"
+
+      - name: Build iOS bundle
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: tools/ci-step.sh "iOS bundle" npx expo export --platform ios --output-dir "$RUNNER_TEMP/export-ios"

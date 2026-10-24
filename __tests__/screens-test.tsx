@@ -1,0 +1,61 @@
+// Renders every screen in German and English, light and dark, and checks that it shows its
+// expected text, no "undefined"/"NaN"/"[object Object]", and logs no errors. Runs in the GitHub check.
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import React from 'react';
+import { fireEvent, screen } from '@testing-library/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LANGS, SCHEMES, renderScreen, visibleText } from '../test/render';
+import { strings, type Lang, type Strings } from '@/lib/i18n';
+
+import LoginScreen from '@/app/(auth)/login';
+import RegisterScreen from '@/app/(auth)/register';
+import ForgotPasswordScreen from '@/app/(auth)/forgot-password';
+import ProfileScreen from '@/app/(app)/profile';
+import UeberweisenScreen from '@/app/(app)/ueberweisen/index';
+import NeueUeberweisungScreen from '@/app/(app)/ueberweisen/neu';
+
+let errors: string[] = [];
+beforeEach(async () => {
+  await AsyncStorage.clear();
+  errors = [];
+  jest.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+    const msg = args.map(String).join(' ');
+    if (/not wrapped in act/.test(msg)) return;
+    errors.push(msg);
+  });
+});
+afterEach(() => {
+  jest.restoreAllMocks();
+  expect(errors).toEqual([]);
+});
+
+type Case = { name: string; Screen: React.ComponentType; expect: (t: Strings, lang: Lang) => string };
+
+const CASES: Case[] = [
+  { name: 'Login', Screen: LoginScreen, expect: (t) => t.auth.login.title },
+  { name: 'Registrieren', Screen: RegisterScreen, expect: (t) => t.auth.register.consent },
+  { name: 'Passwort vergessen', Screen: ForgotPasswordScreen, expect: (t) => t.auth.forgot.title },
+  { name: 'Profil', Screen: ProfileScreen, expect: (t) => t.profile.signedInAs },
+  { name: 'Überweisen', Screen: UeberweisenScreen, expect: (t) => t.transfer.newTransfer },
+  { name: 'Neue Überweisung', Screen: NeueUeberweisungScreen, expect: (t) => t.transfer.recipientTitle },
+];
+
+describe.each(LANGS)('every screen renders (%s)', (lang) => {
+  const t = strings(lang);
+  describe.each(SCHEMES)('%s theme', (scheme) => {
+    it.each(CASES.map((c) => [c.name, c] as const))('%s', async (_name, c) => {
+      await renderScreen(c.Screen, { lang, scheme });
+      expect(screen.getAllByText(c.expect(t, lang)).length).toBeGreaterThan(0);
+      const bad = visibleText(screen.toJSON()).filter((s) => /undefined|NaN|\[object Object\]/.test(s));
+      expect(bad).toEqual([]);
+    });
+  });
+
+  it('register asks to confirm the demo notice', async () => {
+    await renderScreen(RegisterScreen, { lang });
+    fireEvent.changeText(screen.getByPlaceholderText(t.auth.register.namePlaceholder), 'Max');
+    fireEvent.changeText(screen.getByPlaceholderText(t.auth.emailPlaceholder), 'max@example.com');
+    fireEvent.press(screen.getByText(t.auth.register.submit));
+    expect(screen.getByText(t.auth.register.errPassword)).toBeTruthy();
+  });
+});
