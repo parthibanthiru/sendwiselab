@@ -1,4 +1,4 @@
--- Money Transfer — run once in Supabase → SQL Editor (a separate project from Finanzpal).
+-- SendWiseLab — run once in Supabase → SQL Editor (a separate project from Finanzpal).
 -- Creates a public profile row for every new user, protects it with Row Level Security,
 -- and adds a function so users can delete their own account (GDPR Art. 17).
 

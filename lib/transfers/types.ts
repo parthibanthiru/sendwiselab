@@ -1,4 +1,4 @@
-// Shared types for Money Transfer.
+// Shared types for SendWiseLab.
 //
 // The app never moves money itself. A licensed open-banking provider (finAPI, Tink or Yapily,
 // see the launch roadmap) initiates a SEPA transfer from the user's own bank account; the bank

@@ -1,5 +1,5 @@
-// Light and dark palettes of Money Transfer. A neutral working look (charcoal + teal) until the
-// app has its real name and brand; change the colors here only.
+// Light and dark palettes of SendWiseLab. A neutral working look (charcoal + teal) until the
+// app has its real brand; change the colors here only.
 //
 // Screens read colors through the active theme:
 //   const colors = useColors();                     // inside a component

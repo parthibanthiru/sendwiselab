@@ -50,7 +50,7 @@ jest.mock('expo-router', () => {
 });
 
 jest.mock('expo-linking', () => ({
-  createURL: () => 'moneytransfer://',
+  createURL: () => 'sendwiselab://',
   parse: () => ({ queryParams: {} }),
   openURL: jest.fn(),
 }));

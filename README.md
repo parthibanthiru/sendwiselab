@@ -1,7 +1,8 @@
-# Money Transfer (working title)
+# SendWiseLab
 
 Android & iOS app (Expo / React Native) for sending SEPA transfers from your own bank account.
-**"Money Transfer" is a placeholder name** — the real name and brand come later (see *Renaming*).
+Named SendWiseLab on 24 Oct 2026 (previously the working title "Money Transfer"); the brand
+colors and icon are still neutral placeholders (see *Renaming*).
 
 The app never holds money. A licensed open-banking provider (shortlist: finAPI, Tink, Yapily)
 starts the transfer from the user's own account, and the bank executes it after the user
@@ -76,7 +77,8 @@ Change `lib/brand.ts`, `app.json` (`name`, `slug`, `scheme`, `ios.bundleIdentifi
 
 ## Open items
 
-- Real name, brand, icon; final bundle identifier (`com.moneytransfer.app` is a placeholder).
+- Brand colors and icon; confirm the bundle identifier `com.sendwiselab.app` (ideally a domain
+  you own) before the first store build.
 - Real open-banking provider (after the contract), bank-account connection screen, server
   endpoint and `transfers` table.
 - Imprint (Impressum) and privacy policy, linked from login and register — required before any

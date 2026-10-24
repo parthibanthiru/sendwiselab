@@ -1,4 +1,4 @@
-// All interface text of Money Transfer, English. Must have exactly the same keys as ./de.ts
+// All interface text of SendWiseLab, English. Must have exactly the same keys as ./de.ts
 // (TypeScript checks this through the `Strings` type).
 import { APP_NAME } from '../brand';
 import type { Strings } from './de';

@@ -1,4 +1,4 @@
-// All interface text of Money Transfer, German. English is in ./en.ts and must have exactly the
+// All interface text of SendWiseLab, German. English is in ./en.ts and must have exactly the
 // same keys — TypeScript enforces this (en is typed as `Strings`), so a missing translation fails
 // the type check in CI.
 import { APP_NAME } from '../brand';
