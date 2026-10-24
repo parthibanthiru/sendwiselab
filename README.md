@@ -1,6 +1,7 @@
 # SendWiseLab
 
-Android & iOS app (Expo / React Native) for sending SEPA transfers from your own bank account.
+Android, iOS and web app (Expo / React Native) for sending SEPA transfers from your own bank account.
+The web version runs at https://parthibanthiru.github.io/sendwiselab/ (see *Web version*).
 Named SendWiseLab on 24 Oct 2026 (previously the working title "Money Transfer"); the brand
 colors and icon are still neutral placeholders (see *Renaming*).
 
@@ -22,7 +23,8 @@ Separated from the Finanzpal app on 24 Oct 2026: own repo, own neutral look, own
   140 characters; Echtzeit or Standard) → review with the **payee check** (Verification of
   Payee: match / close match with "use this name" / no match / not possible; a warning needs
   an explicit confirmation) → done. First transfers to a new IBAN get an extra warning.
-- **Profile:** name, light/dark/system theme, German/English, sign out, delete account.
+- **Profile:** name, light/dark/system theme, German/English, sign out, delete account (confirmed
+  on the page, so it also works in a browser).
 - German and English everywhere (`lib/strings/de.ts` + `en.ts`; the type check fails if a text is missing).
 
 ```
@@ -30,17 +32,19 @@ app/_layout.tsx               auth gate: logged out → /login, logged in → /u
 app/(auth)/…                  login, register, forgot-password
 app/(app)/ueberweisen/        overview (index) + new transfer (neu)
 app/(app)/profile.tsx
-lib/brand.ts                  app name (placeholder)
+lib/brand.ts                  app name
 lib/iban.ts                   IBAN check digits (mod 97), SEPA lengths, formatting
 lib/transfers/                TransferProvider interface, demo provider (simulated payee check),
                               recipients + history on the phone, limits and amount check
 lib/i18n.ts, lib/strings/     languages
 lib/format.ts                 € amounts and dates per language
 lib/supabase.ts, context/     Supabase client, auth / theme / language providers
-components/                   theme (palettes), UI kit, transfer building blocks, auth shell
+components/                   theme (palettes), UI kit, transfer building blocks, auth shell,
+                              setup notice (shown when a build has no Supabase keys)
 supabase/schema.sql           profiles + delete_own_account()
 __tests__/, test/             Jest tests (every screen DE/EN light/dark, IBAN, limits, full transfer)
-.github/workflows/app-check.yml  GitHub check on every push
+.github/workflows/app-check.yml   GitHub check on every push (incl. the web bundle)
+.github/workflows/deploy-web.yml  builds the web app and publishes it on GitHub Pages
 prototype-web/                SendWiseLab: standalone web concept demo (currency exchange), not part of the app
 ```
 
@@ -49,8 +53,28 @@ prototype-web/                SendWiseLab: standalone web concept demo (currency
 `prototype-web/index.html` is a separate single-page concept demo for international transfers
 with currency exchange (calculator, send flow, activity, rates). It uses fixed sample rates and an
 illustrative fee, moves no money, and is not used by the Expo app. Open the file in a browser,
-or online at https://parthibanthiru.github.io/sendwiselab/ (GitHub Pages; the root `index.html`
-forwards to the demo). See `prototype-web/README.md`.
+or online at https://parthibanthiru.github.io/sendwiselab/prototype-web/. See `prototype-web/README.md`.
+
+## Web version
+
+The same Expo app runs in the browser (React Native Web, single-page build). Every push to `main`
+builds it and publishes it on GitHub Pages under `/sendwiselab` (`experiments.baseUrl` in
+`app.json`) via `.github/workflows/deploy-web.yml`, together with the prototype above.
+Locally: `npm run web` (dev server) or `npm run build:web` (output in `dist/`).
+
+One-time setup:
+
+1. GitHub → Settings → Pages → Source: **GitHub Actions**.
+2. GitHub → Settings → Secrets and variables → Actions → **Variables**: `EXPO_PUBLIC_SUPABASE_URL`
+   and `EXPO_PUBLIC_SUPABASE_ANON_KEY` (anon key only; it ends up in the public JavaScript).
+   Re-run the "Deploy web" workflow after adding them. Without them the site shows a
+   "sign-in isn't set up yet" notice.
+3. Supabase → Authentication → URL Configuration: Site URL
+   `https://parthibanthiru.github.io/sendwiselab/`, and add the same URL under Redirect URLs, so
+   confirmation e-mails lead back to the site.
+
+On the web, recipients and the transfer history are kept in the browser's local storage (on the
+phone in AsyncStorage), like the session. A custom domain later means changing `baseUrl`.
 
 ## Setup
 
@@ -83,6 +107,6 @@ Change `lib/brand.ts`, `app.json` (`name`, `slug`, `scheme`, `ios.bundleIdentifi
 - Real open-banking provider (after the contract), bank-account connection screen, server
   endpoint and `transfers` table.
 - Imprint (Impressum) and privacy policy, linked from login and register — required before any
-  public release. Registration currently only asks to confirm the demo notice.
+  public release, and the web version on GitHub Pages is already publicly reachable. Registration currently only asks to confirm the demo notice.
 - Google / Apple sign-in (not set up).
 - Limits (1.000 € / 2.000 €) are starting values, to be confirmed with the provider.

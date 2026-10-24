@@ -79,6 +79,7 @@ jest.mock('@/lib/supabase', () => {
     return q;
   };
   return {
+    isSupabaseConfigured: true,
     supabase: {
       auth: {
         getSession: async () => ({ data: { session } }),

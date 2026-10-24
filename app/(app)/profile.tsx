@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { useAuth } from '@/context/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { Button, ChoiceField, ErrorText, InfoText, Input } from '@/components/ui';
@@ -17,6 +17,9 @@ export default function ProfileScreen() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  // Inline confirmation instead of Alert.alert, which does nothing in a web browser.
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   async function saveName() {
     setError(null);
@@ -30,18 +33,15 @@ export default function ProfileScreen() {
     else setInfo(L.saved);
   }
 
-  function confirmDelete() {
-    Alert.alert(L.deleteTitle, L.deleteText, [
-      { text: t.common.cancel, style: 'cancel' },
-      {
-        text: L.deleteConfirm,
-        style: 'destructive',
-        onPress: async () => {
-          const err = await deleteAccount();
-          if (err) setError(err);
-        },
-      },
-    ]);
+  async function doDelete() {
+    setError(null);
+    setDeleting(true);
+    const err = await deleteAccount();
+    setDeleting(false);
+    if (err) {
+      setError(err);
+      setConfirmingDelete(false);
+    }
   }
 
   return (
@@ -83,7 +83,16 @@ export default function ProfileScreen() {
 
       <View style={{ height: spacing.md }} />
       <Button title={L.signOut} variant="secondary" onPress={signOut} />
-      <Button title={L.deleteAccount} variant="danger" onPress={confirmDelete} />
+      {confirmingDelete ? (
+        <View style={styles.confirm} accessibilityRole="alert">
+          <Text style={styles.confirmTitle}>{L.deleteTitle}</Text>
+          <Text style={styles.confirmText}>{L.deleteText}</Text>
+          <Button title={L.deleteConfirm} variant="danger" onPress={doDelete} loading={deleting} />
+          <Button title={t.common.cancel} variant="secondary" onPress={() => setConfirmingDelete(false)} />
+        </View>
+      ) : (
+        <Button title={L.deleteAccount} variant="danger" onPress={() => setConfirmingDelete(true)} />
+      )}
     </ScrollView>
   );
 }
@@ -100,4 +109,12 @@ const useStyles = makeStyles((colors) => ({
   label: { color: colors.muted, fontSize: 13 },
   email: { fontSize: 17, fontWeight: '700', color: colors.text, marginTop: 2 },
   meta: { color: colors.muted, fontSize: 13, marginTop: spacing.sm },
+  confirm: {
+    backgroundColor: colors.dangerBg,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginTop: spacing.sm,
+  },
+  confirmTitle: { fontSize: 16, fontWeight: '700', color: colors.danger, marginBottom: spacing.sm },
+  confirmText: { fontSize: 14, color: colors.text, lineHeight: 20, marginBottom: spacing.md },
 }));

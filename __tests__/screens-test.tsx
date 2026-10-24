@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LANGS, SCHEMES, renderScreen, visibleText } from '../test/render';
+import { LANGS, SCHEMES, renderScreen, settle, visibleText } from '../test/render';
 import { strings, type Lang, type Strings } from '@/lib/i18n';
 
 import LoginScreen from '@/app/(auth)/login';
@@ -13,6 +13,7 @@ import ForgotPasswordScreen from '@/app/(auth)/forgot-password';
 import ProfileScreen from '@/app/(app)/profile';
 import UeberweisenScreen from '@/app/(app)/ueberweisen/index';
 import NeueUeberweisungScreen from '@/app/(app)/ueberweisen/neu';
+import { SetupNotice } from '@/components/SetupNotice';
 
 let errors: string[] = [];
 beforeEach(async () => {
@@ -38,6 +39,7 @@ const CASES: Case[] = [
   { name: 'Profil', Screen: ProfileScreen, expect: (t) => t.profile.signedInAs },
   { name: 'Überweisen', Screen: UeberweisenScreen, expect: (t) => t.transfer.newTransfer },
   { name: 'Neue Überweisung', Screen: NeueUeberweisungScreen, expect: (t) => t.transfer.recipientTitle },
+  { name: 'Setup-Hinweis', Screen: SetupNotice, expect: (t) => t.setup.title },
 ];
 
 describe.each(LANGS)('every screen renders (%s)', (lang) => {
@@ -57,5 +59,21 @@ describe.each(LANGS)('every screen renders (%s)', (lang) => {
     fireEvent.changeText(screen.getByPlaceholderText(t.auth.emailPlaceholder), 'max@example.com');
     fireEvent.press(screen.getByText(t.auth.register.submit));
     expect(screen.getByText(t.auth.register.errPassword)).toBeTruthy();
+  });
+
+  it('profile asks on the page before deleting the account', async () => {
+    const { supabase } = require('@/lib/supabase');
+    supabase.rpc.mockReset();
+    supabase.rpc.mockImplementation(async () => ({ error: null }));
+    await renderScreen(ProfileScreen, { lang });
+    fireEvent.press(screen.getByText(t.profile.deleteAccount));
+    expect(screen.getByText(t.profile.deleteText)).toBeTruthy();
+    expect(supabase.rpc).not.toHaveBeenCalled();
+    fireEvent.press(screen.getByText(t.common.cancel));
+    expect(screen.queryByText(t.profile.deleteText)).toBeNull();
+    fireEvent.press(screen.getByText(t.profile.deleteAccount));
+    fireEvent.press(screen.getByText(t.profile.deleteConfirm));
+    await settle();
+    expect(supabase.rpc).toHaveBeenCalledWith('delete_own_account');
   });
 });

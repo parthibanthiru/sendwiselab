@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { useEffect, type ReactNode } from 'react';
+import { ActivityIndicator, Platform, View } from 'react-native';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -7,6 +7,8 @@ import { AuthProvider, useAuth } from '@/context/AuthProvider';
 import { ThemeProvider } from '@/context/ThemeProvider';
 import { LanguageProvider } from '@/context/LanguageProvider';
 import { useTheme } from '@/components/theme';
+import { SetupNotice } from '@/components/SetupNotice';
+import { isSupabaseConfigured } from '@/lib/supabase';
 
 // Sends logged-out users to /login and logged-in users into the app.
 function AuthGate() {
@@ -38,14 +40,31 @@ function AuthGate() {
   );
 }
 
+// In a wide browser window the app keeps a phone-to-tablet width, centred on the page.
+function WebFrame({ children }: { children: ReactNode }) {
+  const { colors } = useTheme();
+  if (Platform.OS !== 'web') return <>{children}</>;
+  return (
+    <View style={{ flex: 1, backgroundColor: colors.bg }}>
+      <View style={{ flex: 1, width: '100%', maxWidth: 720, alignSelf: 'center' }}>{children}</View>
+    </View>
+  );
+}
+
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
         <LanguageProvider>
-          <AuthProvider>
-            <AuthGate />
-          </AuthProvider>
+          <WebFrame>
+            {isSupabaseConfigured ? (
+              <AuthProvider>
+                <AuthGate />
+              </AuthProvider>
+            ) : (
+              <SetupNotice />
+            )}
+          </WebFrame>
         </LanguageProvider>
       </ThemeProvider>
     </SafeAreaProvider>

@@ -10,6 +10,12 @@ export const en: Strings = {
     unknownError: 'Unknown error.',
   },
 
+  setup: {
+    title: 'Sign-in isn’t set up yet',
+    text: `${APP_NAME} isn’t connected to an account server yet, so you can’t register or sign in right now.`,
+    hint: 'For developers: set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY and rebuild the app.',
+  },
+
   tabs: {
     transfer: 'Transfer',
     profileTitle: 'My profile',

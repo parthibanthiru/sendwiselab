@@ -1,0 +1,66 @@
+# Builds the web version of the app and publishes it on GitHub Pages:
+#   https://parthibanthiru.github.io/sendwiselab/                 the app (Expo web, single-page)
+#   https://parthibanthiru.github.io/sendwiselab/prototype-web/   the currency-exchange concept demo
+#
+# One-time setup on GitHub:
+#   1. Settings → Pages → Build and deployment → Source: "GitHub Actions".
+#   2. Settings → Secrets and variables → Actions → Variables: add EXPO_PUBLIC_SUPABASE_URL and
+#      EXPO_PUBLIC_SUPABASE_ANON_KEY (the public anon key, never the service-role key).
+#      Without them the site shows a "sign-in isn't set up yet" notice instead of the login.
+name: Deploy web
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; a newer push replaces a queued one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Install packages
+        run: npm install --no-audit --no-fund
+
+      - name: Build the web app
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+        run: npx expo export --platform web --output-dir dist
+
+      - name: Add page fallback and the prototype
+        run: |
+          # GitHub Pages has no server-side routing: unknown paths get 404.html, which is the app,
+          # so links such as /sendwiselab/ueberweisen/neu open the right screen.
+          cp dist/index.html dist/404.html
+          cp -r prototype-web dist/prototype-web
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

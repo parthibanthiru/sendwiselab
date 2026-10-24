@@ -10,6 +10,13 @@ export const de = {
     unknownError: 'Unbekannter Fehler.',
   },
 
+  // Shown when the app was built without Supabase keys (e.g. a fresh web deployment).
+  setup: {
+    title: 'Anmeldung noch nicht eingerichtet',
+    text: `${APP_NAME} ist noch mit keinem Konto-Server verbunden, daher sind Registrierung und Anmeldung im Moment nicht möglich.`,
+    hint: 'Für Entwickler: EXPO_PUBLIC_SUPABASE_URL und EXPO_PUBLIC_SUPABASE_ANON_KEY setzen und die App neu bauen.',
+  },
+
   tabs: {
     transfer: 'Überweisen',
     profileTitle: 'Mein Profil',
