@@ -48,8 +48,9 @@ prototype-web/                SendWiseLab: standalone web concept demo (currency
 
 `prototype-web/index.html` is a separate single-page concept demo for international transfers
 with currency exchange (calculator, send flow, activity, rates). It uses fixed sample rates and an
-illustrative fee, moves no money, and is not used by the Expo app. Open the file in a browser;
-see `prototype-web/README.md`.
+illustrative fee, moves no money, and is not used by the Expo app. Open the file in a browser,
+or online at https://parthibanthiru.github.io/sendwiselab/ (GitHub Pages; the root `index.html`
+forwards to the demo). See `prototype-web/README.md`.
 
 ## Setup
 
