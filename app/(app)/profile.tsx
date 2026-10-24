@@ -6,6 +6,7 @@ import { Button, ChoiceField, ErrorText, InfoText, Input } from '@/components/ui
 import { makeStyles, radius, spacing, ThemePreference, useTheme } from '@/components/theme';
 import { useI18n, type LangPreference } from '@/lib/i18n';
 import { formatDate } from '@/lib/format';
+import { LegalLinks } from '@/components/LegalPage';
 
 export default function ProfileScreen() {
   const styles = useStyles();
@@ -93,6 +94,7 @@ export default function ProfileScreen() {
       ) : (
         <Button title={L.deleteAccount} variant="danger" onPress={() => setConfirmingDelete(true)} />
       )}
+      <LegalLinks />
     </ScrollView>
   );
 }

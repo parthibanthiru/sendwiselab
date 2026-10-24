@@ -87,6 +87,53 @@ export const en: Strings = {
     deleteConfirm: 'Delete permanently',
   },
 
+  legal: {
+    impressum: 'Legal notice',
+    privacy: 'Privacy',
+    privacyTitle: 'Privacy policy',
+    updated: (date: string) => `Last updated: ${date}`,
+    incomplete: 'The operator details are still being added.',
+    operatorHeading: 'Information pursuant to § 5 DDG (German Digital Services Act)',
+    controllerHeading: '1. Controller',
+    contact: 'Email',
+    impressumSections: [
+      {
+        title: 'Note',
+        body: `${APP_NAME} is a demo project. It provides no payment services and moves no real money. The accounts, recipients and transfers shown are examples.`,
+      },
+      {
+        title: 'Links',
+        body: 'The operators of linked external websites are solely responsible for their content.',
+      },
+    ],
+    privacySections: [
+      {
+        title: '2. Overview',
+        body: `${APP_NAME} is a demo version. Transfers are only simulated: no bank or payment data is sent to banks or payment providers. We only process the data needed for your user account and for running the website. There is no tracking, no analytics, no advertising cookies and no externally loaded fonts.`,
+      },
+      {
+        title: '3. Website hosting',
+        body: 'The web version is served through GitHub Pages (GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA). When you open it, GitHub processes technically necessary data such as your IP address, the time of access and browser information in server logs to deliver the site and protect it from abuse. The legal basis is Art. 6(1)(f) GDPR (legitimate interest in secure operation). For transfers to the USA, GitHub relies on the EU-US Data Privacy Framework or standard contractual clauses.',
+      },
+      {
+        title: '4. User account',
+        body: 'To register and sign you in, we store your email address, your name, your password (only as an encrypted hash) and the times you registered and signed in. We use Supabase (Supabase, Inc.) as a processor, with storage in a data centre in Frankfurt am Main (EU). Confirmation and password emails are sent through Supabase. The legal basis is Art. 6(1)(b) GDPR (providing the account). The data is deleted when you delete your account.',
+      },
+      {
+        title: '5. Data on your device',
+        body: 'Saved recipients, the transfer history, your sign-in session and your theme and language settings are kept only in your browser or device storage and are not sent to us. This storage is strictly necessary for the features you use (§ 25(2) no. 2 TDDDG). You can remove it by deleting your account, signing out or clearing the site data in your browser.',
+      },
+      {
+        title: '6. Your rights',
+        body: 'You have the right to access, rectification, erasure, restriction of processing, data portability and to object (Art. 15–21 GDPR). To use them, email the controller. You can also lodge a complaint with a data protection supervisory authority, for example the State Commissioner for Data Protection and Freedom of Information of Baden-Württemberg.',
+      },
+      {
+        title: '7. Changes',
+        body: 'We update this policy when the app or the services it uses change. The version published here applies.',
+      },
+    ],
+  },
+
   transfer: {
     title: 'Transfer',
     newTitle: 'New transfer',

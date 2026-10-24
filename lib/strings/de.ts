@@ -88,6 +88,53 @@ export const de = {
     deleteConfirm: 'Endgültig löschen',
   },
 
+  legal: {
+    impressum: 'Impressum',
+    privacy: 'Datenschutz',
+    privacyTitle: 'Datenschutzerklärung',
+    updated: (date: string) => `Stand: ${date}`,
+    incomplete: 'Die Angaben zum Betreiber werden gerade ergänzt.',
+    operatorHeading: 'Angaben gemäß § 5 DDG',
+    controllerHeading: '1. Verantwortlicher',
+    contact: 'E-Mail',
+    impressumSections: [
+      {
+        title: 'Hinweis',
+        body: `${APP_NAME} ist ein Demo-Projekt. Es werden keine Zahlungsdienste erbracht und kein echtes Geld bewegt. Angezeigte Konten, Empfänger und Überweisungen sind Beispiele.`,
+      },
+      {
+        title: 'Haftung für Links',
+        body: 'Für Inhalte externer Websites, auf die verlinkt wird, sind ausschließlich deren Betreiber verantwortlich.',
+      },
+    ],
+    privacySections: [
+      {
+        title: '2. Überblick',
+        body: `${APP_NAME} ist eine Demo-Version. Überweisungen werden nur simuliert: Es werden keine Bank- oder Zahlungsdaten an Banken oder Zahlungsdienstleister übermittelt. Wir verarbeiten nur die Daten, die für dein Benutzerkonto und den Betrieb der Website nötig sind. Es gibt kein Tracking, keine Analyse-Tools, keine Werbe-Cookies und keine extern geladenen Schriftarten.`,
+      },
+      {
+        title: '3. Hosting der Website',
+        body: 'Die Web-Version wird über GitHub Pages bereitgestellt (GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA). Beim Aufruf verarbeitet GitHub technisch notwendige Daten wie IP-Adresse, Zeitpunkt des Abrufs und Browser-Informationen in Server-Protokollen, um die Seite auszuliefern und vor Missbrauch zu schützen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem sicheren Betrieb). Für Übermittlungen in die USA stützt sich GitHub auf das EU-US Data Privacy Framework bzw. Standardvertragsklauseln.',
+      },
+      {
+        title: '4. Benutzerkonto',
+        body: 'Für Registrierung und Anmeldung speichern wir deine E-Mail-Adresse, deinen Namen, dein Passwort (nur verschlüsselt als Hash) sowie Zeitpunkte von Registrierung und Anmeldung. Dafür nutzen wir Supabase (Supabase, Inc.) als Auftragsverarbeiter mit Speicherung in einem Rechenzentrum in Frankfurt am Main (EU). Bestätigungs- und Passwort-E-Mails werden über Supabase versendet. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Bereitstellung des Kontos). Die Daten werden gelöscht, sobald du dein Konto löschst.',
+      },
+      {
+        title: '5. Daten auf deinem Gerät',
+        body: 'Gespeicherte Empfänger, der Überweisungsverlauf, deine Anmeldesitzung sowie Design- und Spracheinstellung liegen nur im Speicher deines Browsers bzw. deines Geräts und werden nicht an uns übertragen. Diese Speicherung ist für die von dir gewünschten Funktionen unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Du kannst die Daten löschen, indem du dein Konto löschst, dich abmeldest oder die Website-Daten in deinem Browser entfernst.',
+      },
+      {
+        title: '6. Deine Rechte',
+        body: 'Du hast das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung, auf Datenübertragbarkeit sowie auf Widerspruch (Art. 15–21 DSGVO). Wende dich dazu per E-Mail an den Verantwortlichen. Außerdem kannst du dich bei einer Datenschutz-Aufsichtsbehörde beschweren, zum Beispiel beim Landesbeauftragten für den Datenschutz und die Informationsfreiheit Baden-Württemberg.',
+      },
+      {
+        title: '7. Änderungen',
+        body: 'Wir passen diese Erklärung an, wenn sich die App oder die eingesetzten Dienste ändern. Es gilt die jeweils hier veröffentlichte Fassung.',
+      },
+    ],
+  },
+
   transfer: {
     title: 'Überweisen',
     newTitle: 'Neue Überweisung',

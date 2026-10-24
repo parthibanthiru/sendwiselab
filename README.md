@@ -25,6 +25,8 @@ Separated from the Finanzpal app on 24 Oct 2026: own repo, own neutral look, own
   an explicit confirmation) → done. First transfers to a new IBAN get an extra warning.
 - **Profile:** name, light/dark/system theme, German/English, sign out, delete account (confirmed
   on the page, so it also works in a browser).
+- **Impressum and privacy policy** (`/legal/impressum`, `/legal/datenschutz`): linked under login,
+  register, the setup notice, the profile and the web prototype; reachable without signing in.
 - German and English everywhere (`lib/strings/de.ts` + `en.ts`; the type check fails if a text is missing).
 
 ```
@@ -32,7 +34,9 @@ app/_layout.tsx               auth gate: logged out → /login, logged in → /u
 app/(auth)/…                  login, register, forgot-password
 app/(app)/ueberweisen/        overview (index) + new transfer (neu)
 app/(app)/profile.tsx
+app/legal/                    Impressum + privacy policy (public)
 lib/brand.ts                  app name
+lib/legal.ts                  operator details for Impressum / privacy policy, policy date
 lib/iban.ts                   IBAN check digits (mod 97), SEPA lengths, formatting
 lib/transfers/                TransferProvider interface, demo provider (simulated payee check),
                               recipients + history on the phone, limits and amount check
@@ -106,7 +110,10 @@ Change `lib/brand.ts`, `app.json` (`name`, `slug`, `scheme`, `ios.bundleIdentifi
   you own) before the first store build.
 - Real open-banking provider (after the contract), bank-account connection screen, server
   endpoint and `transfers` table.
-- Imprint (Impressum) and privacy policy, linked from login and register — required before any
-  public release, and the web version on GitHub Pages is already publicly reachable. Registration currently only asks to confirm the demo notice.
+- Impressum and privacy policy pages exist, but the operator details in `lib/legal.ts` are still
+  empty (the pages say so). Fill them in; the web version is publicly reachable. The privacy text
+  assumes the Supabase project is in Frankfurt (EU) and no other services; update it (and
+  `PRIVACY_UPDATED`) whenever that changes. Have both texts checked before a real launch.
+  Registration currently only asks to confirm the demo notice.
 - Google / Apple sign-in (not set up).
 - Limits (1.000 € / 2.000 €) are starting values, to be confirmed with the provider.

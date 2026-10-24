@@ -4,8 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SendWiseLab</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: app shell — sticky top bar, two-column workspace (transfer flow | rate breakdown + activity), stacks on phones */
 :root{
@@ -167,6 +165,8 @@ td.r,th.r{text-align:right}
 tbody tr{cursor:pointer}
 tbody tr:hover td{background:var(--sunk)}
 
+.legal{text-align:center;font-size:13px;color:var(--muted);padding-block:0 32px}
+.legal a{color:var(--muted)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;transition:.25s;pointer-events:none;z-index:20}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -240,6 +240,8 @@ tbody tr:hover td{background:var(--sunk)}
     </div>
   </section>
 </main>
+
+<footer class="legal"><a href="../legal/impressum">Impressum</a> · <a href="../legal/datenschutz">Datenschutz</a></footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 

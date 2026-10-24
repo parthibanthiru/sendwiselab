@@ -3,6 +3,7 @@ import { Image, KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'r
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { fonts, makeStyles, spacing, useColors } from './theme';
 import { APP_NAME } from '@/lib/brand';
+import { LegalLinks } from './LegalPage';
 
 // Shared shell for login / register / reset screens.
 export function AuthScreen({
@@ -31,6 +32,7 @@ export function AuthScreen({
           <Text style={styles.title}>{title}</Text>
           {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
           {children}
+          <LegalLinks />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

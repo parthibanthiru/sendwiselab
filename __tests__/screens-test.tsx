@@ -14,6 +14,8 @@ import ProfileScreen from '@/app/(app)/profile';
 import UeberweisenScreen from '@/app/(app)/ueberweisen/index';
 import NeueUeberweisungScreen from '@/app/(app)/ueberweisen/neu';
 import { SetupNotice } from '@/components/SetupNotice';
+import ImpressumScreen from '@/app/legal/impressum';
+import DatenschutzScreen from '@/app/legal/datenschutz';
 
 let errors: string[] = [];
 beforeEach(async () => {
@@ -40,6 +42,8 @@ const CASES: Case[] = [
   { name: 'Überweisen', Screen: UeberweisenScreen, expect: (t) => t.transfer.newTransfer },
   { name: 'Neue Überweisung', Screen: NeueUeberweisungScreen, expect: (t) => t.transfer.recipientTitle },
   { name: 'Setup-Hinweis', Screen: SetupNotice, expect: (t) => t.setup.title },
+  { name: 'Impressum', Screen: ImpressumScreen, expect: (t) => t.legal.operatorHeading },
+  { name: 'Datenschutz', Screen: DatenschutzScreen, expect: (t) => t.legal.privacySections[3].title },
 ];
 
 describe.each(LANGS)('every screen renders (%s)', (lang) => {
@@ -59,6 +63,22 @@ describe.each(LANGS)('every screen renders (%s)', (lang) => {
     fireEvent.changeText(screen.getByPlaceholderText(t.auth.emailPlaceholder), 'max@example.com');
     fireEvent.press(screen.getByText(t.auth.register.submit));
     expect(screen.getByText(t.auth.register.errPassword)).toBeTruthy();
+  });
+
+  it('login links to the Impressum and the privacy policy', async () => {
+    const router = require('expo-router').__router;
+    router.push.mockClear();
+    await renderScreen(LoginScreen, { lang });
+    fireEvent.press(screen.getByText(t.legal.impressum));
+    fireEvent.press(screen.getByText(t.legal.privacy));
+    expect(router.push.mock.calls.map((c: unknown[]) => c[0])).toEqual(['/legal/impressum', '/legal/datenschutz']);
+  });
+
+  it('legal pages show the operator, or flag that details are missing', async () => {
+    const { OPERATOR, isOperatorComplete } = require('@/lib/legal');
+    await renderScreen(ImpressumScreen, { lang });
+    if (isOperatorComplete) expect(screen.getByText(OPERATOR.email, { exact: false })).toBeTruthy();
+    else expect(screen.getByText(t.legal.incomplete)).toBeTruthy();
   });
 
   it('profile asks on the page before deleting the account', async () => {

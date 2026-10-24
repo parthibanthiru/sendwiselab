@@ -1,8 +1,9 @@
 # SendWiseLab — web prototype
 
 A single-page concept demo for **international transfers with currency exchange**, kept separate
-from the Expo app in this repo. Open `index.html` in any browser; it has no build step and no
-dependencies besides Google Fonts.
+from the Expo app in this repo. Open `index.html` in any browser; it has no build step and loads nothing from other
+sites (system fonts only, so no visitor data goes to a font service). Online, its footer links
+to the app's Impressum and privacy policy.
 
 **Demo only.** Exchange rates are fixed sample values (24 Oct 2026), the fee formula
 (0.45 € + 0.41 %), arrival times and the "typical bank" comparison are illustrative, and no

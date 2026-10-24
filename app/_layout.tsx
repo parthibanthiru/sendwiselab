@@ -20,7 +20,9 @@ function AuthGate() {
   useEffect(() => {
     if (loading) return;
     const inAuthGroup = segments[0] === '(auth)';
-    if (!session && !inAuthGroup) router.replace('/login');
+    // Impressum and privacy policy stay reachable when signed out.
+    const isPublic = segments[0] === 'legal';
+    if (!session && !inAuthGroup && !isPublic) router.replace('/login');
     else if (session && inAuthGroup) router.replace('/');
   }, [session, loading, segments]);
 
@@ -38,6 +40,12 @@ function AuthGate() {
       <Slot />
     </>
   );
+}
+
+// Build without Supabase keys: only the legal pages work, everything else shows the setup notice.
+function UnconfiguredGate() {
+  const segments = useSegments();
+  return segments[0] === 'legal' ? <Slot /> : <SetupNotice />;
 }
 
 // In a wide browser window the app keeps a phone-to-tablet width, centred on the page.
@@ -62,7 +70,7 @@ export default function RootLayout() {
                 <AuthGate />
               </AuthProvider>
             ) : (
-              <SetupNotice />
+              <UnconfiguredGate />
             )}
           </WebFrame>
         </LanguageProvider>
