@@ -29,6 +29,12 @@ export default function IdentitaetScreen() {
     getIdentity().then(setIdentity);
   }, []);
 
+  // The session can arrive after the first render; prefill the name from the profile then.
+  const profileName = (user?.user_metadata?.full_name as string | undefined) ?? '';
+  useEffect(() => {
+    if (profileName) setFullName((current) => current || profileName);
+  }, [profileName]);
+
   const submit = async () => {
     setError(null);
     if (fullName.trim().split(/\s+/).filter(Boolean).length < 2) return setError(L.errors.name);

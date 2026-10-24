@@ -145,6 +145,7 @@ describe.each(LANGS)('international screens (%s)', (lang) => {
 
   it('identity check refuses under-18s and accepts adults', async () => {
     await renderScreen(IdentitaetScreen, { lang });
+    expect(screen.getByTestId('id-name').props.value).toBe('Test Nutzer'); // prefilled from the profile
     fireEvent.changeText(screen.getByTestId('id-birth'), '01.01.2020');
     fireEvent.changeText(screen.getByTestId('id-street'), 'Hauptstraße 1');
     fireEvent.changeText(screen.getByTestId('id-city'), '79100 Freiburg');
